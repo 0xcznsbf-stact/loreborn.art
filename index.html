@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Loreborn — Original Dark Fantasy Stories</title>
+  <meta name="description" content="Original dark fantasy short-form stories. The Obsidian Throne. The Last Executioner. New episodes across YouTube, Facebook, TikTok & Instagram." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:   #06080a;
+      --deep:    #0d1014;
+      --surface: #13181e;
+      --border:  #1e262f;
+      --gold:    #c8a96e;
+      --gold2:   #e2c98a;
+      --ember:   #8b3a1a;
+      --text:    #d4ccc0;
+      --muted:   #7a7268;
+      --accent:  #4a6fa5;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: 'Crimson Text', Georgia, serif;
+      font-size: 18px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── CANVAS BACKGROUND ── */
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .page-wrap {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 24px 80px;
+      position: relative;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 200px;
+      background: linear-gradient(to bottom, transparent, var(--black));
+      pointer-events: none;
+    }
+
+    .sigil {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 0.2s;
+    }
+
+    .hero-eyebrow {
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 0.4s;
+      margin-bottom: 20px;
+    }
+
+    .hero-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(52px, 12vw, 112px);
+      font-weight: 900;
+      line-height: 0.9;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 0.6s;
+      margin-bottom: 28px;
+    }
+
+    .hero-title span {
+      display: block;
+      background: linear-gradient(135deg, var(--gold2) 0%, var(--gold) 50%, #9a7a40 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: 20px;
+      font-style: italic;
+      color: var(--muted);
+      max-width: 480px;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 0.8s;
+      margin-bottom: 52px;
+    }
+
+    .platform-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 1s;
+    }
+
+    .platform-links a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 22px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      font-family: 'Cinzel', serif;
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: border-color 0.3s, background 0.3s, color 0.3s;
+      backdrop-filter: blur(4px);
+    }
+
+    .platform-links a:hover {
+      border-color: var(--gold);
+      background: rgba(200,169,110,0.08);
+      color: var(--gold2);
+    }
+
+    .platform-links a svg {
+      width: 15px;
+      height: 15px;
+      fill: currentColor;
+      flex-shrink: 0;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 0 24px;
+      max-width: 900px;
+      margin: 0 auto 80px;
+    }
+
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--border), transparent);
+    }
+
+    .divider-glyph {
+      font-family: 'Cinzel', serif;
+      font-size: 18px;
+      color: var(--gold);
+      opacity: 0.6;
+    }
+
+    /* ── SECTION TITLES ── */
+    .section-label {
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 700;
+      color: var(--text);
+      text-align: center;
+      margin-bottom: 56px;
+      line-height: 1.15;
+    }
+
+    /* ── ARCS GRID ── */
+    .stories-section {
+      padding: 0 24px 100px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .arcs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2px;
+    }
+
+    .arc-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.3s;
+    }
+
+    .arc-card:hover { border-color: rgba(200,169,110,0.3); }
+
+    .arc-card.active { border-color: rgba(200,169,110,0.5); }
+
+    .arc-header {
+      padding: 32px 28px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .arc-meta {
+      flex: 1;
+    }
+
+    .arc-tag {
+      display: inline-block;
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border: 1px solid;
+      margin-bottom: 14px;
+    }
+
+    .arc-tag.complete {
+      color: var(--gold);
+      border-color: rgba(200,169,110,0.4);
+      background: rgba(200,169,110,0.06);
+    }
+
+    .arc-tag.ongoing {
+      color: #7ab8e8;
+      border-color: rgba(122,184,232,0.4);
+      background: rgba(122,184,232,0.06);
+    }
+
+    .arc-title {
+      font-family: 'Cinzel', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+
+    .arc-desc {
+      font-size: 15px;
+      font-style: italic;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .arc-toggle {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: border-color 0.3s, background 0.3s;
+      margin-top: 4px;
+    }
+
+    .arc-card.active .arc-toggle {
+      border-color: var(--gold);
+      background: rgba(200,169,110,0.1);
+    }
+
+    .arc-toggle svg {
+      width: 14px;
+      height: 14px;
+      fill: var(--muted);
+      transition: transform 0.35s, fill 0.3s;
+    }
+
+    .arc-card.active .arc-toggle svg {
+      transform: rotate(180deg);
+      fill: var(--gold);
+    }
+
+    /* ── EPISODE LIST ── */
+    .episode-list {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s cubic-bezier(0.4,0,0.2,1);
+      border-top: 1px solid transparent;
+    }
+
+    .arc-card.active .episode-list {
+      max-height: 800px;
+      border-top-color: var(--border);
+      overflow-y: auto;
+    }
+
+    .episode-list::-webkit-scrollbar { width: 4px; }
+    .episode-list::-webkit-scrollbar-track { background: transparent; }
+    .episode-list::-webkit-scrollbar-thumb { background: var(--border); }
+
+    .ep-inner {
+      padding: 8px 0 16px;
+    }
+
+    .ep-item {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      padding: 10px 28px;
+      transition: background 0.2s;
+    }
+
+    .ep-item:hover { background: rgba(255,255,255,0.03); }
+
+    .ep-num {
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      color: var(--gold);
+      opacity: 0.6;
+      min-width: 36px;
+      flex-shrink: 0;
+    }
+
+    .ep-title {
+      font-size: 15px;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .ep-title em {
+      font-style: italic;
+      color: var(--muted);
+      font-size: 13px;
+      display: block;
+    }
+
+    /* ── ABOUT ── */
+    .about-section {
+      padding: 0 24px 100px;
+      max-width: 660px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .about-text {
+      font-size: 19px;
+      font-style: italic;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 36px;
+    }
+
+    .about-text strong {
+      color: var(--text);
+      font-style: normal;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 36px 24px;
+      text-align: center;
+    }
+
+    footer p {
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+    }
+
+    footer a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .platform-links a { padding: 10px 16px; font-size: 11px; }
+      .arc-header { padding: 24px 20px; }
+      .ep-item { padding: 9px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<div class="page-wrap">
+
+  <!-- ═══ HERO ═══ -->
+  <section class="hero">
+
+    <!-- Eye sigil SVG -->
+    <svg class="sigil" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="32" cy="32" rx="28" ry="28" stroke="#c8a96e" stroke-width="1" opacity="0.3"/>
+      <path d="M4 32 C14 16, 50 16, 60 32 C50 48, 14 48, 4 32Z" stroke="#c8a96e" stroke-width="1" fill="none"/>
+      <circle cx="32" cy="32" r="8" stroke="#c8a96e" stroke-width="1" fill="rgba(200,169,110,0.08)"/>
+      <circle cx="32" cy="32" r="3" fill="#c8a96e" opacity="0.8"/>
+      <line x1="32" y1="4"  x2="32" y2="12" stroke="#c8a96e" stroke-width="1" opacity="0.5"/>
+      <line x1="32" y1="52" x2="32" y2="60" stroke="#c8a96e" stroke-width="1" opacity="0.5"/>
+    </svg>
+
+    <p class="hero-eyebrow">Original Dark Fantasy Stories</p>
+
+    <h1 class="hero-title">
+      <span>Loreborn</span>
+    </h1>
+
+    <p class="hero-sub">
+      Stories that begin in darkness<br/>and earn their way to light.
+    </p>
+
+    <div class="platform-links">
+      <a href="https://www.youtube.com/@loreborn" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+        YouTube
+      </a>
+      <a href="https://www.facebook.com/loreborn" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M24 12.07C24 5.41 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.04V9.41c0-3.02 1.8-4.7 4.54-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.5c-1.5 0-1.96.93-1.96 1.89v2.26h3.32l-.53 3.5h-2.8V24C19.62 23.1 24 18.1 24 12.07z"/></svg>
+        Facebook
+      </a>
+      <a href="https://www.tiktok.com/@loreborn" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.29 6.29 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9.01a8.16 8.16 0 0 0 4.78 1.52V7.09a4.85 4.85 0 0 1-1.01-.4z"/></svg>
+        TikTok
+      </a>
+      <a href="https://www.instagram.com/loreborn" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+        Instagram
+      </a>
+    </div>
+  </section>
+
+  <!-- ═══ ABOUT ═══ -->
+  <section class="about-section reveal">
+    <p class="about-text">
+      <strong>Loreborn</strong> is an original dark fantasy storytelling channel.<br/>
+      Short-form serialized stories — built episode by episode,<br/>
+      carried by characters who earn everything they're given.
+    </p>
+  </section>
+
+  <div class="divider reveal">
+    <div class="divider-line"></div>
+    <div class="divider-glyph">👁</div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- ═══ STORIES ═══ -->
+  <section class="stories-section">
+    <p class="section-label reveal">The Stories</p>
+    <h2 class="section-title reveal">Story Arcs</h2>
+
+    <div class="arcs-grid">
+
+      <!-- ARC 1: THE OBSIDIAN THRONE -->
+      <div class="arc-card reveal" onclick="toggleArc(this)">
+        <div class="arc-header">
+          <div class="arc-meta">
+            <span class="arc-tag complete">Complete · 35 Episodes</span>
+            <h3 class="arc-title">The Obsidian Throne</h3>
+            <p class="arc-desc">A blind girl becomes the prison for an ancient darkness. Neither of them expected what came next.</p>
+          </div>
+          <div class="arc-toggle">
+            <svg viewBox="0 0 16 16"><path d="M8 10.5L2 4.5h12z"/></svg>
+          </div>
+        </div>
+        <div class="episode-list">
+          <div class="ep-inner">
+            <div class="ep-item"><span class="ep-num">EP.1</span><span class="ep-title">The Throne That Chose No One</span></div>
+            <div class="ep-item"><span class="ep-num">EP.2</span><span class="ep-title">She Drained The Throne's Power</span></div>
+            <div class="ep-item"><span class="ep-num">EP.3</span><span class="ep-title">She Was Never Really Blind</span></div>
+            <div class="ep-item"><span class="ep-num">EP.4</span><span class="ep-title">The Ancient Evil Finally Has A Name</span></div>
+            <div class="ep-item"><span class="ep-num">EP.5</span><span class="ep-title">She Didn't Come To Destroy It</span></div>
+            <div class="ep-item"><span class="ep-num">EP.6</span><span class="ep-title">It Found The One Thing She Still Fears</span></div>
+            <div class="ep-item"><span class="ep-num">EP.7</span><span class="ep-title">It Wasn't The Monster That Burned Her Village</span></div>
+            <div class="ep-item"><span class="ep-num">EP.8</span><span class="ep-title">She Smiled In The Dream</span></div>
+            <div class="ep-item"><span class="ep-num">EP.9</span><span class="ep-title">He Sharpened His Sword. Just In Case.</span></div>
+            <div class="ep-item"><span class="ep-num">EP.10</span><span class="ep-title">The Vael Finally Spoke With Her Voice</span></div>
+            <div class="ep-item"><span class="ep-num">EP.11</span><span class="ep-title">The Darkness Didn't Expect Kindness</span></div>
+            <div class="ep-item"><span class="ep-num">EP.12</span><span class="ep-title">Her Own Hands Reached For His Sword</span></div>
+            <div class="ep-item"><span class="ep-num">EP.13</span><span class="ep-title">It Said Her Name In Her Mother's Voice</span></div>
+            <div class="ep-item"><span class="ep-num">EP.14</span><span class="ep-title">She Realized It Wanted Her To Leave</span></div>
+            <div class="ep-item"><span class="ep-num">EP.15</span><span class="ep-title">The Darkness Made Her An Offer</span></div>
+            <div class="ep-item"><span class="ep-num">EP.16</span><span class="ep-title">She Said Yes</span></div>
+            <div class="ep-item"><span class="ep-num">EP.17</span><span class="ep-title">He Knew The Whole Time And He Stayed</span></div>
+            <div class="ep-item"><span class="ep-num">EP.18</span><span class="ep-title">It's Not Afraid Of Me. It's Afraid Of Us.</span></div>
+            <div class="ep-item"><span class="ep-num">EP.19</span><span class="ep-title">Part Of It Got Out</span></div>
+            <div class="ep-item"><span class="ep-num">EP.20</span><span class="ep-title">It Wore Her Face Into Town</span></div>
+            <div class="ep-item"><span class="ep-num">EP.21</span><span class="ep-title">They Think She's The Monster</span></div>
+            <div class="ep-item"><span class="ep-num">EP.22</span><span class="ep-title">She Took Off Her Hood</span></div>
+            <div class="ep-item"><span class="ep-num">EP.23</span><span class="ep-title">The Farmer Put Down His Scythe</span></div>
+            <div class="ep-item"><span class="ep-num">EP.24</span><span class="ep-title">The Splinter Found A New Host</span></div>
+            <div class="ep-item"><span class="ep-num">EP.25</span><span class="ep-title">She Pulled Him Forward</span></div>
+            <div class="ep-item"><span class="ep-num">EP.26</span><span class="ep-title">She Realized She Could End This</span></div>
+            <div class="ep-item"><span class="ep-num">EP.27</span><span class="ep-title">They Left Before Sunrise</span></div>
+            <div class="ep-item"><span class="ep-num">EP.28</span><span class="ep-title">The North Remembered Her</span></div>
+            <div class="ep-item"><span class="ep-num">EP.29</span><span class="ep-title">What The Vael Used To Be</span></div>
+            <div class="ep-item"><span class="ep-num">EP.30</span><span class="ep-title">She Asked It For Its Name</span></div>
+            <div class="ep-item"><span class="ep-num">EP.31</span><span class="ep-title">What Happens If It Leaves</span></div>
+            <div class="ep-item"><span class="ep-num">EP.32</span><span class="ep-title">The Warning</span></div>
+            <div class="ep-item"><span class="ep-num">EP.33</span><span class="ep-title">What Was Below The Door</span></div>
+            <div class="ep-item"><span class="ep-num">EP.34</span><span class="ep-title">What Being Chosen Means</span></div>
+            <div class="ep-item"><span class="ep-num">EP.35</span><span class="ep-title">Her Name Was Aevon <em>— Finale</em></span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ARC 2: THE LAST EXECUTIONER -->
+      <div class="arc-card reveal" onclick="toggleArc(this)">
+        <div class="arc-header">
+          <div class="arc-meta">
+            <span class="arc-tag ongoing">Ongoing</span>
+            <h3 class="arc-title">The Last Executioner</h3>
+            <p class="arc-desc">A kingdom that executes people who dream of the future. One executioner who realizes she's been killing innocents.</p>
+          </div>
+          <div class="arc-toggle">
+            <svg viewBox="0 0 16 16"><path d="M8 10.5L2 4.5h12z"/></svg>
+          </div>
+        </div>
+        <div class="episode-list">
+          <div class="ep-inner">
+            <div class="ep-item"><span class="ep-num">EP.1</span><span class="ep-title">The One Who Walked Willingly</span></div>
+            <div class="ep-item"><span class="ep-num">EP.2</span><span class="ep-title">What Lirien Dreamed</span></div>
+            <div class="ep-item"><span class="ep-num">EP.3</span><span class="ep-title">The Dream Was About Her</span></div>
+            <div class="ep-item"><span class="ep-num">EP.4</span><span class="ep-title">The King Already Knows</span></div>
+            <div class="ep-item"><span class="ep-num">EP.5</span><span class="ep-title">The One Who Was Already Waiting</span></div>
+            <div class="ep-item"><span class="ep-num">EP.6</span><span class="ep-title">Three Days</span></div>
+            <div class="ep-item"><span class="ep-num">EP.7</span><span class="ep-title">I Dreamed You'd Come Back</span></div>
+            <div class="ep-item"><span class="ep-num">EP.8</span><span class="ep-title">The Woman Who Stopped</span></div>
+            <div class="ep-item"><span class="ep-num">EP.9</span><span class="ep-title">Word For Word</span></div>
+            <div class="ep-item"><span class="ep-num">EP.10+</span><span class="ep-title">New episodes dropping 👁️</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider reveal">
+    <div class="divider-line"></div>
+    <div class="divider-glyph">🗡</div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer>
+    <p>© 2025 Loreborn &nbsp;·&nbsp; <a href="mailto:hello@loreborn.art">hello@loreborn.art</a> &nbsp;·&nbsp; Original stories. All rights reserved.</p>
+  </footer>
+
+</div><!-- end page-wrap -->
+
+<script>
+  /* ── PARTICLE / EMBER BACKGROUND ── */
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  class Particle {
+    constructor() { this.reset(); }
+    reset() {
+      this.x  = Math.random() * W;
+      this.y  = H + 10;
+      this.vx = (Math.random() - 0.5) * 0.4;
+      this.vy = -(Math.random() * 0.5 + 0.2);
+      this.life = 0;
+      this.maxLife = Math.random() * 300 + 200;
+      this.size = Math.random() * 1.5 + 0.5;
+    }
+    update() {
+      this.x  += this.vx;
+      this.y  += this.vy;
+      this.vx += (Math.random() - 0.5) * 0.04;
+      this.life++;
+      if (this.life > this.maxLife || this.y < -10) this.reset();
+    }
+    draw() {
+      const p = this.life / this.maxLife;
+      const alpha = p < 0.1 ? p * 10 : p > 0.8 ? (1 - p) * 5 : 1;
+      ctx.globalAlpha = alpha * 0.25;
+      ctx.fillStyle = `hsl(${38 + Math.random()*20}, 70%, ${55 + p*20}%)`;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  for (let i = 0; i < 60; i++) {
+    const p = new Particle();
+    p.y = Math.random() * H;
+    p.life = Math.random() * p.maxLife;
+    particles.push(p);
+  }
+
+  function loop() {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => { p.update(); p.draw(); });
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(loop);
+  }
+  loop();
+
+  /* ── SCROLL REVEAL ── */
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => obs.observe(el));
+
+  /* ── ARC TOGGLE ── */
+  function toggleArc(card) {
+    const isActive = card.classList.contains('active');
+    document.querySelectorAll('.arc-card').forEach(c => c.classList.remove('active'));
+    if (!isActive) card.classList.add('active');
+  }
+</script>
+</body>
+</html>
