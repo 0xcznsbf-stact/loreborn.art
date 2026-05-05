@@ -1,671 +1,699 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Loreborn — Original Dark Fantasy Stories</title>
-  <meta name="description" content="Original dark fantasy short-form stories. The Obsidian Throne. The Last Executioner. New episodes across YouTube, Facebook, TikTok & Instagram." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Loreborn — Original Dark Fantasy Stories</title>
+<meta name="description" content="Original dark fantasy short-form stories. The Obsidian Throne. The Last Executioner."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root{
+  --bg:#07090B;
+  --surface:#0E1216;
+  --border:#1C2128;
+  --border2:#252C35;
+  --text:#E8E2D9;
+  --muted:#5A6370;
+  --muted2:#8A9199;
+  --red:#C0392B;
+  --red2:#E74C3C;
+  --red-glow:rgba(192,57,43,0.15);
+  --cream:#F5EFE6;
+}
 
-    :root {
-      --black:   #06080a;
-      --deep:    #0d1014;
-      --surface: #13181e;
-      --border:  #1e262f;
-      --gold:    #c8a96e;
-      --gold2:   #e2c98a;
-      --ember:   #8b3a1a;
-      --text:    #d4ccc0;
-      --muted:   #7a7268;
-      --accent:  #4a6fa5;
-    }
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  font-weight:300;
+  font-size:16px;
+  line-height:1.7;
+  overflow-x:hidden;
+  cursor:none;
+}
 
-    html { scroll-behavior: smooth; }
+/* CUSTOM CURSOR */
+.cursor{
+  position:fixed;width:10px;height:10px;
+  background:var(--red2);border-radius:50%;
+  pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:transform 0.1s,width 0.3s,height 0.3s,background 0.3s;
+}
+.cursor-ring{
+  position:fixed;width:36px;height:36px;
+  border:1px solid rgba(231,76,60,0.4);
+  border-radius:50%;pointer-events:none;z-index:9998;
+  transform:translate(-50%,-50%);
+  transition:transform 0.15s ease,width 0.3s,height 0.3s,border-color 0.3s;
+}
+body:has(a:hover) .cursor{width:6px;height:6px}
+body:has(a:hover) .cursor-ring{width:48px;height:48px;border-color:var(--red2)}
 
-    body {
-      background: var(--black);
-      color: var(--text);
-      font-family: 'Crimson Text', Georgia, serif;
-      font-size: 18px;
-      line-height: 1.7;
-      overflow-x: hidden;
-    }
+/* NOISE OVERLAY */
+.noise{
+  position:fixed;inset:0;z-index:1;
+  pointer-events:none;opacity:0.028;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+}
 
-    /* ── CANVAS BACKGROUND ── */
-    #bg-canvas {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-    }
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:20px 40px;
+  display:flex;align-items:center;justify-content:space-between;
+  transition:background 0.4s,backdrop-filter 0.4s,border-bottom 0.4s;
+}
+nav.scrolled{
+  background:rgba(7,9,11,0.85);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{
+  font-family:'Playfair Display',serif;
+  font-size:22px;font-weight:900;letter-spacing:-0.02em;
+  color:var(--text);text-decoration:none;
+  position:relative;
+}
+.nav-logo::after{
+  content:'';position:absolute;bottom:-2px;left:0;right:0;height:1px;
+  background:var(--red2);transform:scaleX(0);transform-origin:left;
+  transition:transform 0.3s;
+}
+.nav-logo:hover::after{transform:scaleX(1)}
 
-    .page-wrap {
-      position: relative;
-      z-index: 1;
-    }
+.nav-links{display:flex;gap:32px;align-items:center}
+.nav-links a{
+  color:var(--muted2);font-size:13px;font-weight:400;
+  letter-spacing:0.06em;text-transform:uppercase;
+  text-decoration:none;transition:color 0.2s;
+}
+.nav-links a:hover{color:var(--text)}
 
-    /* ── HERO ── */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 60px 24px 80px;
-      position: relative;
-    }
+/* HERO */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  justify-content:flex-end;padding:0 40px 80px;
+  position:relative;overflow:hidden;
+}
 
-    .hero::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 200px;
-      background: linear-gradient(to bottom, transparent, var(--black));
-      pointer-events: none;
-    }
+.hero-bg{
+  position:absolute;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 70% 40%,rgba(192,57,43,0.07) 0%,transparent 70%),
+    radial-gradient(ellipse 40% 60% at 20% 80%,rgba(192,57,43,0.04) 0%,transparent 60%);
+}
 
-    .sigil {
-      width: 64px;
-      height: 64px;
-      margin-bottom: 32px;
-      opacity: 0;
-      animation: fadeUp 1s ease forwards 0.2s;
-    }
+.hero-grid-lines{
+  position:absolute;inset:0;z-index:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);
+  background-size:80px 80px;
+  mask-image:radial-gradient(ellipse at center,black 20%,transparent 75%);
+}
 
-    .hero-eyebrow {
-      font-family: 'Cinzel', serif;
-      font-size: 11px;
-      letter-spacing: 0.35em;
-      text-transform: uppercase;
-      color: var(--gold);
-      opacity: 0;
-      animation: fadeUp 1s ease forwards 0.4s;
-      margin-bottom: 20px;
-    }
+.hero-content{position:relative;z-index:2;max-width:1200px}
 
-    .hero-title {
-      font-family: 'Cinzel', serif;
-      font-size: clamp(52px, 12vw, 112px);
-      font-weight: 900;
-      line-height: 0.9;
-      letter-spacing: -0.02em;
-      color: var(--text);
-      opacity: 0;
-      animation: fadeUp 1s ease forwards 0.6s;
-      margin-bottom: 28px;
-    }
+.hero-tag{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:11px;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--red2);margin-bottom:28px;
+  opacity:0;animation:fadeUp 0.8s ease forwards 0.3s;
+}
+.hero-tag::before{
+  content:'';width:24px;height:1px;background:var(--red2);
+}
 
-    .hero-title span {
-      display: block;
-      background: linear-gradient(135deg, var(--gold2) 0%, var(--gold) 50%, #9a7a40 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
+.hero-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(64px,10vw,140px);
+  font-weight:900;line-height:0.88;
+  letter-spacing:-0.04em;
+  color:var(--cream);
+  opacity:0;animation:fadeUp 0.9s ease forwards 0.5s;
+  margin-bottom:32px;
+}
+.hero-title em{
+  font-style:italic;font-weight:400;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(232,226,217,0.3);
+}
 
-    .hero-sub {
-      font-size: 20px;
-      font-style: italic;
-      color: var(--muted);
-      max-width: 480px;
-      opacity: 0;
-      animation: fadeUp 1s ease forwards 0.8s;
-      margin-bottom: 52px;
-    }
+.hero-bottom{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  gap:40px;flex-wrap:wrap;
+  opacity:0;animation:fadeUp 0.8s ease forwards 0.8s;
+}
 
-    .platform-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      justify-content: center;
-      opacity: 0;
-      animation: fadeUp 1s ease forwards 1s;
-    }
+.hero-desc{
+  max-width:380px;font-size:16px;
+  color:var(--muted2);line-height:1.65;font-weight:300;
+}
 
-    .platform-links a {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 11px 22px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.03);
-      color: var(--text);
-      font-family: 'Cinzel', serif;
-      font-size: 12px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      text-decoration: none;
-      transition: border-color 0.3s, background 0.3s, color 0.3s;
-      backdrop-filter: blur(4px);
-    }
+.hero-cta{
+  display:flex;flex-direction:column;align-items:flex-end;gap:16px;
+}
 
-    .platform-links a:hover {
-      border-color: var(--gold);
-      background: rgba(200,169,110,0.08);
-      color: var(--gold2);
-    }
+.btn-primary{
+  display:inline-flex;align-items:center;gap:12px;
+  padding:14px 28px;
+  background:var(--red);color:var(--cream);
+  font-family:'DM Sans',sans-serif;font-size:13px;
+  font-weight:500;letter-spacing:0.08em;text-transform:uppercase;
+  text-decoration:none;border:none;cursor:none;
+  transition:background 0.25s,transform 0.25s;
+  clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));
+}
+.btn-primary:hover{background:var(--red2);transform:translateY(-2px)}
+.btn-primary svg{width:16px;height:16px;fill:currentColor;transition:transform 0.25s}
+.btn-primary:hover svg{transform:translateX(3px)}
 
-    .platform-links a svg {
-      width: 15px;
-      height: 15px;
-      fill: currentColor;
-      flex-shrink: 0;
-    }
+.hero-scroll{
+  display:flex;align-items:center;gap:10px;
+  color:var(--muted);font-size:11px;letter-spacing:0.15em;text-transform:uppercase;
+}
+.scroll-line{
+  width:40px;height:1px;background:var(--muted);
+  animation:scrollPulse 2s ease-in-out infinite;
+}
+@keyframes scrollPulse{0%,100%{width:40px;opacity:0.4}50%{width:60px;opacity:1}}
 
-    /* ── DIVIDER ── */
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      padding: 0 24px;
-      max-width: 900px;
-      margin: 0 auto 80px;
-    }
+/* PLATFORM BAR */
+.platform-bar{
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  padding:0 40px;
+  display:flex;align-items:center;
+  overflow:hidden;
+  position:relative;z-index:2;
+}
+.platform-bar-inner{
+  display:flex;align-items:center;gap:0;
+  animation:marquee 20s linear infinite;
+  white-space:nowrap;
+}
+.platform-bar:hover .platform-bar-inner{animation-play-state:paused}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.platform-item{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:16px 36px;
+  border-right:1px solid var(--border);
+  color:var(--muted);font-size:12px;font-weight:400;
+  letter-spacing:0.1em;text-transform:uppercase;
+  text-decoration:none;transition:color 0.2s,background 0.2s;
+  cursor:none;
+}
+.platform-item:hover{color:var(--text);background:rgba(255,255,255,0.02)}
+.platform-item svg{width:14px;height:14px;fill:currentColor;flex-shrink:0}
 
-    .divider-line {
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(to right, transparent, var(--border), transparent);
-    }
+/* STORIES SECTION */
+.stories{padding:120px 40px;max-width:1200px;margin:0 auto}
 
-    .divider-glyph {
-      font-family: 'Cinzel', serif;
-      font-size: 18px;
-      color: var(--gold);
-      opacity: 0.6;
-    }
+.section-header{
+  display:flex;align-items:baseline;justify-content:space-between;
+  margin-bottom:64px;gap:20px;flex-wrap:wrap;
+}
+.section-kicker{
+  font-size:11px;font-weight:500;letter-spacing:0.25em;
+  text-transform:uppercase;color:var(--red2);
+  display:flex;align-items:center;gap:10px;
+}
+.section-kicker::before{content:'';width:20px;height:1px;background:var(--red2)}
+.section-h2{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(36px,5vw,60px);font-weight:700;
+  letter-spacing:-0.03em;line-height:1;
+  color:var(--cream);
+}
 
-    /* ── SECTION TITLES ── */
-    .section-label {
-      font-family: 'Cinzel', serif;
-      font-size: 11px;
-      letter-spacing: 0.4em;
-      text-transform: uppercase;
-      color: var(--gold);
-      text-align: center;
-      margin-bottom: 12px;
-    }
+/* ARC CARDS */
+.arc-list{display:flex;flex-direction:column;gap:2px}
 
-    .section-title {
-      font-family: 'Cinzel', serif;
-      font-size: clamp(28px, 5vw, 44px);
-      font-weight: 700;
-      color: var(--text);
-      text-align: center;
-      margin-bottom: 56px;
-      line-height: 1.15;
-    }
+.arc{
+  border:1px solid var(--border);
+  background:var(--surface);
+  overflow:hidden;
+  transition:border-color 0.3s;
+  cursor:none;
+}
+.arc:hover{border-color:var(--border2)}
+.arc.open{border-color:rgba(192,57,43,0.35)}
 
-    /* ── ARCS GRID ── */
-    .stories-section {
-      padding: 0 24px 100px;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
+.arc-head{
+  display:grid;
+  grid-template-columns:80px 1fr auto;
+  align-items:center;
+  gap:24px;padding:32px 36px;
+  cursor:none;
+}
 
-    .arcs-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2px;
-    }
+.arc-num{
+  font-family:'Playfair Display',serif;
+  font-size:56px;font-weight:900;
+  line-height:1;letter-spacing:-0.05em;
+  color:var(--border2);
+  transition:color 0.3s;
+  user-select:none;
+}
+.arc.open .arc-num{color:var(--red)}
 
-    .arc-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      overflow: hidden;
-      cursor: pointer;
-      transition: border-color 0.3s;
-    }
+.arc-info{min-width:0}
+.arc-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:10px;font-weight:500;letter-spacing:0.15em;
+  text-transform:uppercase;margin-bottom:10px;
+}
+.arc-badge.done{color:#4CAF50}
+.arc-badge.live{color:var(--red2)}
+.arc-badge .dot{
+  width:6px;height:6px;border-radius:50%;
+  background:currentColor;
+}
+.arc-badge.live .dot{animation:blink 1.4s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
 
-    .arc-card:hover { border-color: rgba(200,169,110,0.3); }
+.arc-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(20px,3vw,28px);font-weight:700;
+  letter-spacing:-0.02em;color:var(--cream);
+  margin-bottom:6px;
+}
+.arc-synopsis{
+  font-size:14px;color:var(--muted2);
+  font-weight:300;line-height:1.5;
+  max-width:480px;
+}
 
-    .arc-card.active { border-color: rgba(200,169,110,0.5); }
+.arc-chevron{
+  width:40px;height:40px;flex-shrink:0;
+  border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  transition:border-color 0.3s,background 0.3s,transform 0.35s;
+}
+.arc.open .arc-chevron{
+  border-color:var(--red);
+  background:var(--red-glow);
+  transform:rotate(180deg) !important;
+}
+.arc-chevron svg{width:14px;height:14px;stroke:var(--muted2);fill:none;stroke-width:2;transition:stroke 0.3s}
+.arc.open .arc-chevron svg{stroke:var(--red2)}
 
-    .arc-header {
-      padding: 32px 28px;
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-    }
+/* EPISODE DRAWER */
+.arc-drawer{
+  max-height:0;overflow:hidden;
+  transition:max-height 0.5s cubic-bezier(0.4,0,0.2,1);
+  border-top:1px solid transparent;
+}
+.arc.open .arc-drawer{
+  max-height:700px;
+  border-top-color:var(--border);
+  overflow-y:auto;
+}
+.arc-drawer::-webkit-scrollbar{width:3px}
+.arc-drawer::-webkit-scrollbar-thumb{background:var(--border2)}
 
-    .arc-meta {
-      flex: 1;
-    }
+.ep-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:1px;background:var(--border);
+  margin:0;
+}
+.ep{
+  background:var(--surface);
+  padding:16px 20px;
+  transition:background 0.2s;
+  cursor:none;
+}
+.ep:hover{background:#111820}
+.ep-n{
+  font-family:'Playfair Display',serif;
+  font-size:11px;color:var(--red);
+  font-weight:700;letter-spacing:0.1em;
+  margin-bottom:4px;
+}
+.ep-t{
+  font-size:13px;color:var(--muted2);
+  font-weight:300;line-height:1.35;
+}
+.ep.finale .ep-t{color:var(--cream);font-weight:500}
+.ep.upcoming{opacity:0.45}
 
-    .arc-tag {
-      display: inline-block;
-      font-family: 'Cinzel', serif;
-      font-size: 10px;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      padding: 4px 10px;
-      border: 1px solid;
-      margin-bottom: 14px;
-    }
+/* ABOUT */
+.about{
+  border-top:1px solid var(--border);
+  padding:120px 40px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:80px;align-items:center;
+  max-width:1200px;margin:0 auto;
+}
+.about-label{
+  font-size:11px;font-weight:500;letter-spacing:0.25em;
+  text-transform:uppercase;color:var(--red2);
+  display:flex;align-items:center;gap:10px;margin-bottom:24px;
+}
+.about-label::before{content:'';width:20px;height:1px;background:var(--red2)}
+.about-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(32px,4vw,48px);font-weight:700;
+  letter-spacing:-0.03em;line-height:1.1;
+  color:var(--cream);margin-bottom:24px;
+}
+.about-body{
+  font-size:16px;color:var(--muted2);
+  line-height:1.8;font-weight:300;
+  margin-bottom:20px;
+}
+.about-body strong{color:var(--text);font-weight:500}
 
-    .arc-tag.complete {
-      color: var(--gold);
-      border-color: rgba(200,169,110,0.4);
-      background: rgba(200,169,110,0.06);
-    }
+.about-stat-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:1px;background:var(--border);
+  border:1px solid var(--border);
+}
+.stat{
+  background:var(--surface);
+  padding:28px 24px;
+}
+.stat-n{
+  font-family:'Playfair Display',serif;
+  font-size:44px;font-weight:900;
+  letter-spacing:-0.04em;color:var(--cream);
+  line-height:1;margin-bottom:6px;
+}
+.stat-n span{font-size:24px;color:var(--red2)}
+.stat-l{font-size:12px;color:var(--muted);font-weight:400;letter-spacing:0.05em}
 
-    .arc-tag.ongoing {
-      color: #7ab8e8;
-      border-color: rgba(122,184,232,0.4);
-      background: rgba(122,184,232,0.06);
-    }
+/* FOOTER */
+footer{
+  border-top:1px solid var(--border);
+  padding:40px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:20px;flex-wrap:wrap;
+}
+.footer-logo{
+  font-family:'Playfair Display',serif;
+  font-size:18px;font-weight:900;color:var(--text);
+  letter-spacing:-0.02em;
+}
+.footer-links{display:flex;gap:28px;align-items:center}
+.footer-links a{
+  font-size:12px;color:var(--muted);font-weight:400;
+  letter-spacing:0.08em;text-transform:uppercase;
+  text-decoration:none;transition:color 0.2s;cursor:none;
+}
+.footer-links a:hover{color:var(--text)}
+.footer-copy{font-size:12px;color:var(--muted);font-weight:300}
 
-    .arc-title {
-      font-family: 'Cinzel', serif;
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1.2;
-      margin-bottom: 10px;
-    }
+/* ANIMATIONS */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(30px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.7s ease,transform 0.7s ease}
+.reveal.in{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:0.1s}
+.reveal-delay-2{transition-delay:0.2s}
+.reveal-delay-3{transition-delay:0.3s}
 
-    .arc-desc {
-      font-size: 15px;
-      font-style: italic;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    .arc-toggle {
-      width: 32px;
-      height: 32px;
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: border-color 0.3s, background 0.3s;
-      margin-top: 4px;
-    }
-
-    .arc-card.active .arc-toggle {
-      border-color: var(--gold);
-      background: rgba(200,169,110,0.1);
-    }
-
-    .arc-toggle svg {
-      width: 14px;
-      height: 14px;
-      fill: var(--muted);
-      transition: transform 0.35s, fill 0.3s;
-    }
-
-    .arc-card.active .arc-toggle svg {
-      transform: rotate(180deg);
-      fill: var(--gold);
-    }
-
-    /* ── EPISODE LIST ── */
-    .episode-list {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.5s cubic-bezier(0.4,0,0.2,1);
-      border-top: 1px solid transparent;
-    }
-
-    .arc-card.active .episode-list {
-      max-height: 800px;
-      border-top-color: var(--border);
-      overflow-y: auto;
-    }
-
-    .episode-list::-webkit-scrollbar { width: 4px; }
-    .episode-list::-webkit-scrollbar-track { background: transparent; }
-    .episode-list::-webkit-scrollbar-thumb { background: var(--border); }
-
-    .ep-inner {
-      padding: 8px 0 16px;
-    }
-
-    .ep-item {
-      display: flex;
-      align-items: baseline;
-      gap: 14px;
-      padding: 10px 28px;
-      transition: background 0.2s;
-    }
-
-    .ep-item:hover { background: rgba(255,255,255,0.03); }
-
-    .ep-num {
-      font-family: 'Cinzel', serif;
-      font-size: 11px;
-      color: var(--gold);
-      opacity: 0.6;
-      min-width: 36px;
-      flex-shrink: 0;
-    }
-
-    .ep-title {
-      font-size: 15px;
-      color: var(--text);
-      line-height: 1.4;
-    }
-
-    .ep-title em {
-      font-style: italic;
-      color: var(--muted);
-      font-size: 13px;
-      display: block;
-    }
-
-    /* ── ABOUT ── */
-    .about-section {
-      padding: 0 24px 100px;
-      max-width: 660px;
-      margin: 0 auto;
-      text-align: center;
-    }
-
-    .about-text {
-      font-size: 19px;
-      font-style: italic;
-      color: var(--muted);
-      line-height: 1.8;
-      margin-bottom: 36px;
-    }
-
-    .about-text strong {
-      color: var(--text);
-      font-style: normal;
-    }
-
-    /* ── FOOTER ── */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 36px 24px;
-      text-align: center;
-    }
-
-    footer p {
-      font-family: 'Cinzel', serif;
-      font-size: 11px;
-      letter-spacing: 0.2em;
-      color: var(--muted);
-    }
-
-    footer a {
-      color: var(--gold);
-      text-decoration: none;
-    }
-
-    /* ── ANIMATIONS ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .reveal {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
-    }
-
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* ── RESPONSIVE ── */
-    @media (max-width: 600px) {
-      .platform-links a { padding: 10px 16px; font-size: 11px; }
-      .arc-header { padding: 24px 20px; }
-      .ep-item { padding: 9px 20px; }
-    }
-  </style>
+/* MOBILE */
+@media(max-width:768px){
+  nav{padding:16px 20px}
+  .nav-links{display:none}
+  .hero{padding:0 20px 60px}
+  .hero-title{font-size:clamp(48px,13vw,80px)}
+  .hero-bottom{flex-direction:column;align-items:flex-start}
+  .hero-cta{align-items:flex-start}
+  .platform-bar{padding:0}
+  .stories{padding:80px 20px}
+  .arc-head{grid-template-columns:48px 1fr auto;padding:24px 20px;gap:16px}
+  .arc-num{font-size:36px}
+  .ep-grid{grid-template-columns:1fr 1fr}
+  .about{grid-template-columns:1fr;padding:80px 20px;gap:48px}
+  footer{padding:32px 20px;flex-direction:column;align-items:flex-start;gap:24px}
+}
+</style>
 </head>
 <body>
 
-<canvas id="bg-canvas"></canvas>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="noise"></div>
 
-<div class="page-wrap">
-
-  <!-- ═══ HERO ═══ -->
-  <section class="hero">
-
-    <!-- Eye sigil SVG -->
-    <svg class="sigil" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="32" cy="32" rx="28" ry="28" stroke="#c8a96e" stroke-width="1" opacity="0.3"/>
-      <path d="M4 32 C14 16, 50 16, 60 32 C50 48, 14 48, 4 32Z" stroke="#c8a96e" stroke-width="1" fill="none"/>
-      <circle cx="32" cy="32" r="8" stroke="#c8a96e" stroke-width="1" fill="rgba(200,169,110,0.08)"/>
-      <circle cx="32" cy="32" r="3" fill="#c8a96e" opacity="0.8"/>
-      <line x1="32" y1="4"  x2="32" y2="12" stroke="#c8a96e" stroke-width="1" opacity="0.5"/>
-      <line x1="32" y1="52" x2="32" y2="60" stroke="#c8a96e" stroke-width="1" opacity="0.5"/>
-    </svg>
-
-    <p class="hero-eyebrow">Original Dark Fantasy Stories</p>
-
-    <h1 class="hero-title">
-      <span>Loreborn</span>
-    </h1>
-
-    <p class="hero-sub">
-      Stories that begin in darkness<br/>and earn their way to light.
-    </p>
-
-    <div class="platform-links">
-      <a href="https://www.facebook.com/share/18btWXzV5B/?mibextid=wwXIfr" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
-        YouTube
-      </a>
-      <a href="https://www.facebook.com/share/18btWXzV5B/?mibextid=wwXIfr" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24"><path d="M24 12.07C24 5.41 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.04V9.41c0-3.02 1.8-4.7 4.54-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.5c-1.5 0-1.96.93-1.96 1.89v2.26h3.32l-.53 3.5h-2.8V24C19.62 23.1 24 18.1 24 12.07z"/></svg>
-        Facebook
-      </a>
-      <a href="https://www.facebook.com/share/18btWXzV5B/?mibextid=wwXIfr" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.29 6.29 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9.01a8.16 8.16 0 0 0 4.78 1.52V7.09a4.85 4.85 0 0 1-1.01-.4z"/></svg>
-        TikTok
-      </a>
-      <a href="https://www.facebook.com/share/18btWXzV5B/?mibextid=wwXIfr" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
-        Instagram
-      </a>
-    </div>
-  </section>
-
-  <!-- ═══ ABOUT ═══ -->
-  <section class="about-section reveal">
-    <p class="about-text">
-      <strong>Loreborn</strong> is an original dark fantasy storytelling channel.<br/>
-      Short-form serialized stories — built episode by episode,<br/>
-      carried by characters who earn everything they're given.
-    </p>
-  </section>
-
-  <div class="divider reveal">
-    <div class="divider-line"></div>
-    <div class="divider-glyph">👁</div>
-    <div class="divider-line"></div>
+<!-- NAV -->
+<nav id="nav">
+  <a href="/" class="nav-logo">Loreborn</a>
+  <div class="nav-links">
+    <a href="#stories">Stories</a>
+    <a href="#about">About</a>
+    <a href="https://www.youtube.com/@loreborn" target="_blank" rel="noopener">Watch</a>
   </div>
+</nav>
 
-  <!-- ═══ STORIES ═══ -->
-  <section class="stories-section">
-    <p class="section-label reveal">The Stories</p>
-    <h2 class="section-title reveal">Story Arcs</h2>
-
-    <div class="arcs-grid">
-
-      <!-- ARC 1: THE OBSIDIAN THRONE -->
-      <div class="arc-card reveal" onclick="toggleArc(this)">
-        <div class="arc-header">
-          <div class="arc-meta">
-            <span class="arc-tag complete">Complete · 35 Episodes</span>
-            <h3 class="arc-title">The Obsidian Throne</h3>
-            <p class="arc-desc">A blind girl becomes the prison for an ancient darkness. Neither of them expected what came next.</p>
-          </div>
-          <div class="arc-toggle">
-            <svg viewBox="0 0 16 16"><path d="M8 10.5L2 4.5h12z"/></svg>
-          </div>
-        </div>
-        <div class="episode-list">
-          <div class="ep-inner">
-            <div class="ep-item"><span class="ep-num">EP.1</span><span class="ep-title">The Throne That Chose No One</span></div>
-            <div class="ep-item"><span class="ep-num">EP.2</span><span class="ep-title">She Drained The Throne's Power</span></div>
-            <div class="ep-item"><span class="ep-num">EP.3</span><span class="ep-title">She Was Never Really Blind</span></div>
-            <div class="ep-item"><span class="ep-num">EP.4</span><span class="ep-title">The Ancient Evil Finally Has A Name</span></div>
-            <div class="ep-item"><span class="ep-num">EP.5</span><span class="ep-title">She Didn't Come To Destroy It</span></div>
-            <div class="ep-item"><span class="ep-num">EP.6</span><span class="ep-title">It Found The One Thing She Still Fears</span></div>
-            <div class="ep-item"><span class="ep-num">EP.7</span><span class="ep-title">It Wasn't The Monster That Burned Her Village</span></div>
-            <div class="ep-item"><span class="ep-num">EP.8</span><span class="ep-title">She Smiled In The Dream</span></div>
-            <div class="ep-item"><span class="ep-num">EP.9</span><span class="ep-title">He Sharpened His Sword. Just In Case.</span></div>
-            <div class="ep-item"><span class="ep-num">EP.10</span><span class="ep-title">The Vael Finally Spoke With Her Voice</span></div>
-            <div class="ep-item"><span class="ep-num">EP.11</span><span class="ep-title">The Darkness Didn't Expect Kindness</span></div>
-            <div class="ep-item"><span class="ep-num">EP.12</span><span class="ep-title">Her Own Hands Reached For His Sword</span></div>
-            <div class="ep-item"><span class="ep-num">EP.13</span><span class="ep-title">It Said Her Name In Her Mother's Voice</span></div>
-            <div class="ep-item"><span class="ep-num">EP.14</span><span class="ep-title">She Realized It Wanted Her To Leave</span></div>
-            <div class="ep-item"><span class="ep-num">EP.15</span><span class="ep-title">The Darkness Made Her An Offer</span></div>
-            <div class="ep-item"><span class="ep-num">EP.16</span><span class="ep-title">She Said Yes</span></div>
-            <div class="ep-item"><span class="ep-num">EP.17</span><span class="ep-title">He Knew The Whole Time And He Stayed</span></div>
-            <div class="ep-item"><span class="ep-num">EP.18</span><span class="ep-title">It's Not Afraid Of Me. It's Afraid Of Us.</span></div>
-            <div class="ep-item"><span class="ep-num">EP.19</span><span class="ep-title">Part Of It Got Out</span></div>
-            <div class="ep-item"><span class="ep-num">EP.20</span><span class="ep-title">It Wore Her Face Into Town</span></div>
-            <div class="ep-item"><span class="ep-num">EP.21</span><span class="ep-title">They Think She's The Monster</span></div>
-            <div class="ep-item"><span class="ep-num">EP.22</span><span class="ep-title">She Took Off Her Hood</span></div>
-            <div class="ep-item"><span class="ep-num">EP.23</span><span class="ep-title">The Farmer Put Down His Scythe</span></div>
-            <div class="ep-item"><span class="ep-num">EP.24</span><span class="ep-title">The Splinter Found A New Host</span></div>
-            <div class="ep-item"><span class="ep-num">EP.25</span><span class="ep-title">She Pulled Him Forward</span></div>
-            <div class="ep-item"><span class="ep-num">EP.26</span><span class="ep-title">She Realized She Could End This</span></div>
-            <div class="ep-item"><span class="ep-num">EP.27</span><span class="ep-title">They Left Before Sunrise</span></div>
-            <div class="ep-item"><span class="ep-num">EP.28</span><span class="ep-title">The North Remembered Her</span></div>
-            <div class="ep-item"><span class="ep-num">EP.29</span><span class="ep-title">What The Vael Used To Be</span></div>
-            <div class="ep-item"><span class="ep-num">EP.30</span><span class="ep-title">She Asked It For Its Name</span></div>
-            <div class="ep-item"><span class="ep-num">EP.31</span><span class="ep-title">What Happens If It Leaves</span></div>
-            <div class="ep-item"><span class="ep-num">EP.32</span><span class="ep-title">The Warning</span></div>
-            <div class="ep-item"><span class="ep-num">EP.33</span><span class="ep-title">What Was Below The Door</span></div>
-            <div class="ep-item"><span class="ep-num">EP.34</span><span class="ep-title">What Being Chosen Means</span></div>
-            <div class="ep-item"><span class="ep-num">EP.35</span><span class="ep-title">Her Name Was Aevon <em>— Finale</em></span></div>
-          </div>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid-lines"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Original Dark Fantasy Stories</div>
+    <h1 class="hero-title">Where<br/><em>darkness</em><br/>earns its name.</h1>
+    <div class="hero-bottom">
+      <p class="hero-desc">
+        Serialized short-form fantasy. Built episode by episode.
+        Carried by characters who earn everything they're given.
+      </p>
+      <div class="hero-cta">
+        <a href="#stories" class="btn-primary">
+          Explore Stories
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <div class="hero-scroll">
+          <div class="scroll-line"></div>
+          Scroll to explore
         </div>
       </div>
-
-      <!-- ARC 2: THE LAST EXECUTIONER -->
-      <div class="arc-card reveal" onclick="toggleArc(this)">
-        <div class="arc-header">
-          <div class="arc-meta">
-            <span class="arc-tag ongoing">Ongoing</span>
-            <h3 class="arc-title">The Last Executioner</h3>
-            <p class="arc-desc">A kingdom that executes people who dream of the future. One executioner who realizes she's been killing innocents.</p>
-          </div>
-          <div class="arc-toggle">
-            <svg viewBox="0 0 16 16"><path d="M8 10.5L2 4.5h12z"/></svg>
-          </div>
-        </div>
-        <div class="episode-list">
-          <div class="ep-inner">
-            <div class="ep-item"><span class="ep-num">EP.1</span><span class="ep-title">The One Who Walked Willingly</span></div>
-            <div class="ep-item"><span class="ep-num">EP.2</span><span class="ep-title">What Lirien Dreamed</span></div>
-            <div class="ep-item"><span class="ep-num">EP.3</span><span class="ep-title">The Dream Was About Her</span></div>
-            <div class="ep-item"><span class="ep-num">EP.4</span><span class="ep-title">The King Already Knows</span></div>
-            <div class="ep-item"><span class="ep-num">EP.5</span><span class="ep-title">The One Who Was Already Waiting</span></div>
-            <div class="ep-item"><span class="ep-num">EP.6</span><span class="ep-title">Three Days</span></div>
-            <div class="ep-item"><span class="ep-num">EP.7</span><span class="ep-title">I Dreamed You'd Come Back</span></div>
-            <div class="ep-item"><span class="ep-num">EP.8</span><span class="ep-title">The Woman Who Stopped</span></div>
-            <div class="ep-item"><span class="ep-num">EP.9</span><span class="ep-title">Word For Word</span></div>
-            <div class="ep-item"><span class="ep-num">EP.10+</span><span class="ep-title">New episodes dropping 👁️</span></div>
-          </div>
-        </div>
-      </div>
-
     </div>
-  </section>
+  </div>
+</section>
 
-  <div class="divider reveal">
-    <div class="divider-line"></div>
-    <div class="divider-glyph">🗡</div>
-    <div class="divider-line"></div>
+<!-- PLATFORM BAR -->
+<div class="platform-bar">
+  <div class="platform-bar-inner">
+    <!-- first set -->
+    <a href="https://www.youtube.com/@loreborn" target="_blank" rel="noopener" class="platform-item">
+      <svg viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+      YouTube
+    </a>
+    <a href="https://www.facebook.com/loreborn" target="_blank" rel="noopener" class="platform-item">
+      <svg viewBox="0 0 24 24"><path d="M24 12.07C24 5.41 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.04V9.41c0-3.02 1.8-4.7 4.54-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.5c-1.5 0-1.96.93-1.96 1.89v2.26h3.32l-.53 3.5h-2.8V24C19.62 23.1 24 18.1 24 12.07z"/></svg>
+      Facebook
+    </a>
+    <a href="https://www.tiktok.com/@loreborn" target="_blank" rel="noopener" class="platform-item">
+      <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.29 6.29 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9.01a8.16 8.16 0 0 0 4.78 1.52V7.09a4.85 4.85 0 0 1-1.01-.4z"/></svg>
+      TikTok
+    </a>
+    <a href="https://www.instagram.com/loreborn" target="_blank" rel="noopener" class="platform-item">
+      <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+      Instagram
+    </a>
+    <span class="platform-item" style="color:var(--muted);cursor:default">👁 New episodes weekly</span>
+    <!-- duplicate for seamless loop -->
+    <a href="https://www.youtube.com/@loreborn" target="_blank" rel="noopener" class="platform-item">
+      <svg viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+      YouTube
+    </a>
+    <a href="https://www.facebook.com/loreborn" target="_blank" rel="noopener" class="platform-item">
+      <svg viewBox="0 0 24 24"><path d="M24 12.07C24 5.41 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.04V9.41c0-3.02 1.8-4.7 4.54-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.5c-1.5 0-1.96.93-1.96 1.89v2.26h3.32l-.53 3.5h-2.8V24C19.62 23.1 24 18.1 24 12.07z"/></svg>
+      Facebook
+    </a>
+    <a href="https://www.tiktok.com/@loreborn" target="_blank" rel="noopener" class="platform-item">
+      <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.29 6.29 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9.01a8.16 8.16 0 0 0 4.78 1.52V7.09a4.85 4.85 0 0 1-1.01-.4z"/></svg>
+      TikTok
+    </a>
+    <a href="https://www.instagram.com/loreborn" target="_blank" rel="noopener" class="platform-item">
+      <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+      Instagram
+    </a>
+    <span class="platform-item" style="color:var(--muted);cursor:default">👁 New episodes weekly</span>
+  </div>
+</div>
+
+<!-- STORIES -->
+<section class="stories" id="stories">
+  <div class="section-header">
+    <div>
+      <div class="section-kicker reveal">Story Arcs</div>
+      <h2 class="section-h2 reveal reveal-delay-1">Two arcs.<br/>One world.</h2>
+    </div>
   </div>
 
-  <!-- ═══ FOOTER ═══ -->
-  <footer>
-    <p>© 2025 Loreborn &nbsp;·&nbsp; <a href="mailto:admin@loreborn.art">admin@loreborn.art</a> &nbsp;·&nbsp; Original stories. All rights reserved.</p>
-  </footer>
+  <div class="arc-list">
 
-</div><!-- end page-wrap -->
+    <!-- ARC 1 -->
+    <div class="arc reveal" onclick="toggleArc(this)">
+      <div class="arc-head">
+        <div class="arc-num">01</div>
+        <div class="arc-info">
+          <div class="arc-badge done"><span class="dot"></span>Complete — 35 Episodes</div>
+          <h3 class="arc-title">The Obsidian Throne</h3>
+          <p class="arc-synopsis">A blind girl becomes the prison for an ancient darkness. Neither of them expected what came next.</p>
+        </div>
+        <div class="arc-chevron">
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="arc-drawer">
+        <div class="ep-grid">
+          <div class="ep"><div class="ep-n">EP.01</div><div class="ep-t">The Throne That Chose No One</div></div>
+          <div class="ep"><div class="ep-n">EP.02</div><div class="ep-t">She Drained The Throne's Power</div></div>
+          <div class="ep"><div class="ep-n">EP.03</div><div class="ep-t">She Was Never Really Blind</div></div>
+          <div class="ep"><div class="ep-n">EP.04</div><div class="ep-t">The Ancient Evil Finally Has A Name</div></div>
+          <div class="ep"><div class="ep-n">EP.05</div><div class="ep-t">She Didn't Come To Destroy It</div></div>
+          <div class="ep"><div class="ep-n">EP.06</div><div class="ep-t">It Found The One Thing She Still Fears</div></div>
+          <div class="ep"><div class="ep-n">EP.07</div><div class="ep-t">It Wasn't The Monster That Burned Her Village</div></div>
+          <div class="ep"><div class="ep-n">EP.08</div><div class="ep-t">She Smiled In The Dream</div></div>
+          <div class="ep"><div class="ep-n">EP.09</div><div class="ep-t">He Sharpened His Sword. Just In Case.</div></div>
+          <div class="ep"><div class="ep-n">EP.10</div><div class="ep-t">The Vael Finally Spoke With Her Voice</div></div>
+          <div class="ep"><div class="ep-n">EP.11</div><div class="ep-t">The Darkness Didn't Expect Kindness</div></div>
+          <div class="ep"><div class="ep-n">EP.12</div><div class="ep-t">Her Own Hands Reached For His Sword</div></div>
+          <div class="ep"><div class="ep-n">EP.13</div><div class="ep-t">It Said Her Name In Her Mother's Voice</div></div>
+          <div class="ep"><div class="ep-n">EP.14</div><div class="ep-t">She Realized It Wanted Her To Leave</div></div>
+          <div class="ep"><div class="ep-n">EP.15</div><div class="ep-t">The Darkness Made Her An Offer</div></div>
+          <div class="ep"><div class="ep-n">EP.16</div><div class="ep-t">She Said Yes</div></div>
+          <div class="ep"><div class="ep-n">EP.17</div><div class="ep-t">He Knew The Whole Time And He Stayed</div></div>
+          <div class="ep"><div class="ep-n">EP.18</div><div class="ep-t">It's Not Afraid Of Me. It's Afraid Of Us.</div></div>
+          <div class="ep"><div class="ep-n">EP.19</div><div class="ep-t">Part Of It Got Out</div></div>
+          <div class="ep"><div class="ep-n">EP.20</div><div class="ep-t">It Wore Her Face Into Town</div></div>
+          <div class="ep"><div class="ep-n">EP.21</div><div class="ep-t">They Think She's The Monster</div></div>
+          <div class="ep"><div class="ep-n">EP.22</div><div class="ep-t">She Took Off Her Hood</div></div>
+          <div class="ep"><div class="ep-n">EP.23</div><div class="ep-t">The Farmer Put Down His Scythe</div></div>
+          <div class="ep"><div class="ep-n">EP.24</div><div class="ep-t">The Splinter Found A New Host</div></div>
+          <div class="ep"><div class="ep-n">EP.25</div><div class="ep-t">She Pulled Him Forward</div></div>
+          <div class="ep"><div class="ep-n">EP.26</div><div class="ep-t">She Realized She Could End This</div></div>
+          <div class="ep"><div class="ep-n">EP.27</div><div class="ep-t">They Left Before Sunrise</div></div>
+          <div class="ep"><div class="ep-n">EP.28</div><div class="ep-t">The North Remembered Her</div></div>
+          <div class="ep"><div class="ep-n">EP.29</div><div class="ep-t">What The Vael Used To Be</div></div>
+          <div class="ep"><div class="ep-n">EP.30</div><div class="ep-t">She Asked It For Its Name</div></div>
+          <div class="ep"><div class="ep-n">EP.31</div><div class="ep-t">What Happens If It Leaves</div></div>
+          <div class="ep"><div class="ep-n">EP.32</div><div class="ep-t">The Warning</div></div>
+          <div class="ep"><div class="ep-n">EP.33</div><div class="ep-t">What Was Below The Door</div></div>
+          <div class="ep"><div class="ep-n">EP.34</div><div class="ep-t">What Being Chosen Means</div></div>
+          <div class="ep finale"><div class="ep-n">EP.35</div><div class="ep-t">Her Name Was Aevon — Finale</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARC 2 -->
+    <div class="arc reveal reveal-delay-1" onclick="toggleArc(this)">
+      <div class="arc-head">
+        <div class="arc-num">02</div>
+        <div class="arc-info">
+          <div class="arc-badge live"><span class="dot"></span>Ongoing — New episodes weekly</div>
+          <h3 class="arc-title">The Last Executioner</h3>
+          <p class="arc-synopsis">A kingdom that kills everyone who dreams of the future. One executioner who realizes she's been killing innocents.</p>
+        </div>
+        <div class="arc-chevron">
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="arc-drawer">
+        <div class="ep-grid">
+          <div class="ep"><div class="ep-n">EP.01</div><div class="ep-t">The One Who Walked Willingly</div></div>
+          <div class="ep"><div class="ep-n">EP.02</div><div class="ep-t">What Lirien Dreamed</div></div>
+          <div class="ep"><div class="ep-n">EP.03</div><div class="ep-t">The Dream Was About Her</div></div>
+          <div class="ep"><div class="ep-n">EP.04</div><div class="ep-t">The King Already Knows</div></div>
+          <div class="ep"><div class="ep-n">EP.05</div><div class="ep-t">The One Who Was Already Waiting</div></div>
+          <div class="ep"><div class="ep-n">EP.06</div><div class="ep-t">Three Days</div></div>
+          <div class="ep"><div class="ep-n">EP.07</div><div class="ep-t">I Dreamed You'd Come Back</div></div>
+          <div class="ep"><div class="ep-n">EP.08</div><div class="ep-t">The Woman Who Stopped</div></div>
+          <div class="ep"><div class="ep-n">EP.09</div><div class="ep-t">Word For Word</div></div>
+          <div class="ep"><div class="ep-n">EP.10</div><div class="ep-t">Eleven Minutes</div></div>
+          <div class="ep upcoming"><div class="ep-n">EP.11+</div><div class="ep-t">New episodes dropping 👁</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div>
+    <div class="about-label reveal">About Loreborn</div>
+    <h2 class="about-title reveal reveal-delay-1">Stories that begin in darkness.</h2>
+    <p class="about-body reveal reveal-delay-2">
+      <strong>Loreborn</strong> is an original dark fantasy storytelling channel built for short-form — but designed to feel like long-form.
+    </p>
+    <p class="about-body reveal reveal-delay-2">
+      Every episode is a piece. Every arc earns its ending. No filler. No shortcuts. Just characters doing hard things in dark worlds.
+    </p>
+    <p class="about-body reveal reveal-delay-3">
+      New episodes across <strong>YouTube, Facebook, TikTok</strong> and <strong>Instagram</strong> — every week.
+    </p>
+  </div>
+  <div class="about-stat-grid reveal reveal-delay-2">
+    <div class="stat">
+      <div class="stat-n">35<span>+</span></div>
+      <div class="stat-l">Episodes published</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">2</div>
+      <div class="stat-l">Original story arcs</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">4</div>
+      <div class="stat-l">Active platforms</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">∞</div>
+      <div class="stat-l">Stories to tell</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Loreborn</div>
+  <div class="footer-links">
+    <a href="https://www.youtube.com/@loreborn" target="_blank" rel="noopener">YouTube</a>
+    <a href="https://www.facebook.com/loreborn" target="_blank" rel="noopener">Facebook</a>
+    <a href="https://www.tiktok.com/@loreborn" target="_blank" rel="noopener">TikTok</a>
+    <a href="https://www.instagram.com/loreborn" target="_blank" rel="noopener">Instagram</a>
+  </div>
+  <div class="footer-copy">© 2025 Loreborn. All rights reserved.</div>
+</footer>
 
 <script>
-  /* ── PARTICLE / EMBER BACKGROUND ── */
-  const canvas = document.getElementById('bg-canvas');
-  const ctx = canvas.getContext('2d');
-  let W, H, particles = [];
+// CURSOR
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px'});
+(function animRing(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing)})();
 
-  function resize() {
-    W = canvas.width  = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-  }
-  resize();
-  window.addEventListener('resize', resize);
+// NAV SCROLL
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>60)},{passive:true});
 
-  class Particle {
-    constructor() { this.reset(); }
-    reset() {
-      this.x  = Math.random() * W;
-      this.y  = H + 10;
-      this.vx = (Math.random() - 0.5) * 0.4;
-      this.vy = -(Math.random() * 0.5 + 0.2);
-      this.life = 0;
-      this.maxLife = Math.random() * 300 + 200;
-      this.size = Math.random() * 1.5 + 0.5;
-    }
-    update() {
-      this.x  += this.vx;
-      this.y  += this.vy;
-      this.vx += (Math.random() - 0.5) * 0.04;
-      this.life++;
-      if (this.life > this.maxLife || this.y < -10) this.reset();
-    }
-    draw() {
-      const p = this.life / this.maxLife;
-      const alpha = p < 0.1 ? p * 10 : p > 0.8 ? (1 - p) * 5 : 1;
-      ctx.globalAlpha = alpha * 0.25;
-      ctx.fillStyle = `hsl(${38 + Math.random()*20}, 70%, ${55 + p*20}%)`;
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
+// ARC TOGGLE
+function toggleArc(el){
+  const open=el.classList.contains('open');
+  document.querySelectorAll('.arc').forEach(a=>a.classList.remove('open'));
+  if(!open)el.classList.add('open');
+}
 
-  for (let i = 0; i < 60; i++) {
-    const p = new Particle();
-    p.y = Math.random() * H;
-    p.life = Math.random() * p.maxLife;
-    particles.push(p);
-  }
-
-  function loop() {
-    ctx.clearRect(0, 0, W, H);
-    particles.forEach(p => { p.update(); p.draw(); });
-    ctx.globalAlpha = 1;
-    requestAnimationFrame(loop);
-  }
-  loop();
-
-  /* ── SCROLL REVEAL ── */
-  const reveals = document.querySelectorAll('.reveal');
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
-    });
-  }, { threshold: 0.12 });
-  reveals.forEach(el => obs.observe(el));
-
-  /* ── ARC TOGGLE ── */
-  function toggleArc(card) {
-    const isActive = card.classList.contains('active');
-    document.querySelectorAll('.arc-card').forEach(c => c.classList.remove('active'));
-    if (!isActive) card.classList.add('active');
-  }
+// SCROLL REVEAL
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');obs.unobserve(e.target)}});
+},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 </script>
 </body>
 </html>
